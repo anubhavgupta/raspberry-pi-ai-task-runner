@@ -1,0 +1,59 @@
+{
+  "name": "extract-models",
+  "description": "Fetch Hugging Face models page, extract list via AI, save to disk",
+  "cron": "0 4 * * 0",
+  "env": {
+    "MODEL_URL": "https://huggingface.co/models",
+    "LLM_API_URL": "http://192.168.1.33:7838/v1/chat/completions",
+    "LLM_MODEL": "default",
+    "TELEGRAM_CHAT_ID": "6383504811"
+  },
+  "functions": [
+    {
+      "id": "fetch-page",
+      "type": "shell",
+      "command": "node",
+      "args": [
+        "functions/fetch-page.js",
+        "--url",
+        "$MODEL_URL"
+      ]
+    },
+    {
+      "id": "ai-extract",
+      "type": "shell",
+      "command": "node",
+      "args": [
+        "functions/ai-task.js",
+        "--instructions",
+        "Extract the model list from the below text.",
+        "--content",
+        "{{result}}"
+      ]
+    },
+    {
+      "id": "save",
+      "type": "shell",
+      "command": "node",
+      "args": [
+        "functions/save-to-disk.js",
+        "--file",
+        "models.txt",
+        "--content",
+        "{{result}}"
+      ]
+    },
+    {
+      "id": "notify-telegram",
+      "type": "shell",
+      "command": "node",
+      "args": [
+        "functions/send-telegram.js",
+        "--chat-id",
+        "$TELEGRAM_CHAT_ID",
+        "--file",
+        "output/models.txt"
+      ]
+    }
+  ]
+}

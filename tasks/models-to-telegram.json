@@ -1,0 +1,16 @@
+{
+  "name": "models-to-telegram",
+  "description": "Read models.txt from output directory and send contents via Telegram",
+  "cron": "0 */6 * * *",
+  "env": {
+    "OUTPUT_DIR": "C:\\projects\\pi-ai-tools\\output"
+  },
+  "functions": [
+    {
+      "id": "send-telegram",
+      "type": "terminal",
+      "command": "node",
+      "args": ["functions/send-telegram.js", "--chat-id", "6383504811", "--file", "$OUTPUT_DIR\\models.txt"]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "pi-ai-tools",
+  "version": "1.0.0",
+  "description": "AI task runner — executes predefined function chains on cron schedules",
+  "main": "dist/index.js",
+  "bin": {
+    "pi-ai-tools": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node --env-file=.env dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "lint": "eslint src/"
+  },
+  "keywords": [
+    "ai",
+    "task-runner",
+    "cron",
+    "automation"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@ai-sdk/openai": "^3.0.74",
+    "@ai-sdk/openai-compatible": "^2.0.51",
+    "ai": "^6.0.209",
+    "jsdom": "^29.1.1",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/node-cron": "^3.0.11",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.8.0"
+  }
+}

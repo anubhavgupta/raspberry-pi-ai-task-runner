@@ -1,0 +1,63 @@
+{
+  "name": "example-task",
+  "description": "Daily AI monitoring check — fetches data, analyzes, and checks health",
+  "cron": "0 2 * * *",
+  "env": {
+    "TARGET_URL": "https://jsonplaceholder.typicode.com/posts/1",
+    "CHECK_ENDPOINT": "https://jsonplaceholder.typicode.com",
+    "LLM_API_URL": "http://192.168.1.33:7838/v1/chat/completions",
+    "LLM_MODEL": "default"
+  },
+  "functions": [
+    {
+      "id": "fetch-data",
+      "type": "shell",
+      "command": "node",
+      "args": [
+        "functions/fetch-data.js",
+        "--url",
+        "$TARGET_URL"
+      ]
+    },
+    {
+      "id": "extract-body",
+      "type": "shell",
+      "command": "node",
+      "args": [
+        "functions/extract-body.js",
+        "--url",
+        "$TARGET_URL"
+      ]
+    },
+    {
+      "id": "analyze",
+      "type": "shell",
+      "command": "node",
+      "args": [
+        "functions/analyze-output.js",
+        "'{{result}}'"
+      ]
+    },
+    {
+      "id": "ai-task",
+      "type": "shell",
+      "command": "node",
+      "args": [
+        "functions/ai-task.js",
+        "--instructions",
+        "Summarize the extracted body content in 2-3 sentences.",
+        "--content",
+        "{{result}}"
+      ]
+    },
+    {
+      "id": "health-check",
+      "type": "terminal",
+      "command": "node",
+      "args": [
+        "functions/health-check.js",
+        "{{result}}"
+      ]
+    }
+  ]
+}
