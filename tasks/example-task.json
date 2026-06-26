@@ -13,51 +13,31 @@
       "id": "fetch-data",
       "type": "shell",
       "command": "node",
-      "args": [
-        "functions/fetch-data.js",
-        "--url",
-        "$TARGET_URL"
-      ]
+      "args": ["functions/fetch-data.js", "--url", "$TARGET_URL"]
     },
     {
       "id": "extract-body",
       "type": "shell",
       "command": "node",
-      "args": [
-        "functions/extract-body.js",
-        "--url",
-        "$TARGET_URL"
-      ]
+      "args": ["functions/extract-body.js", "--url", "$TARGET_URL"]
     },
     {
-      "id": "analyze",
+      "id": "save-content",
       "type": "shell",
       "command": "node",
-      "args": [
-        "functions/analyze-output.js",
-        "'{{result}}'"
-      ]
+      "args": ["functions/save-to-disk.js", "--file", "output/example-content.txt", "--content", "{{result}}"]
     },
     {
       "id": "ai-task",
       "type": "shell",
       "command": "node",
-      "args": [
-        "functions/ai-task.js",
-        "--instructions",
-        "Summarize the extracted body content in 2-3 sentences.",
-        "--content",
-        "{{result}}"
-      ]
+      "args": ["functions/ai-task.js", "--instructions-file", "tasks/summarize-body-instructions.txt", "--content-file", "output/example-content.txt"]
     },
     {
       "id": "health-check",
       "type": "terminal",
       "command": "node",
-      "args": [
-        "functions/health-check.js",
-        "{{result}}"
-      ]
+      "args": ["functions/health-check.js", "{{result}}"]
     }
   ]
 }

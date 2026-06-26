@@ -18,10 +18,16 @@
       "saveResultToVariable": "RAW_HTML"
     },
     {
+      "id": "save-content",
+      "type": "shell",
+      "command": "node",
+      "args": ["functions/save-to-disk.js", "--file", "output/models-raw-content.txt", "--content", "{{$RAW_HTML}}"]
+    },
+    {
       "id": "ai-extract",
       "type": "shell",
       "command": "node",
-      "args": ["functions/ai-task.js", "--instructions", "Extract the model list from the below text.", "--content", "{{$RAW_HTML}}"],
+      "args": ["functions/ai-task.js", "--instructions-file", "tasks/extract-models-instructions.txt", "--content-file", "output/models-raw-content.txt"],
       "saveResultToVariable": "CURRENT_MODELS"
     },
     {
@@ -37,10 +43,16 @@
       "args": ["functions/read-from-disk.js", "--file", "output/models-old.txt"]
     },
     {
+      "id": "save-compare-content",
+      "type": "shell",
+      "command": "node",
+      "args": ["functions/save-to-disk.js", "--file", "output/compare-content.txt", "--content", "Previous models:\n{{result}}\n\nCurrent models:\n{{$CURRENT_MODELS}}"]
+    },
+    {
       "id": "compare",
       "type": "shell",
       "command": "node",
-      "args": ["functions/ai-task.js", "--instructions", "Compare the two model lists below. The first list is the previous models. The second list is the current models.\n\nIf the previous models say '(no previous models — first run)', output:\nFIRST_RUN — list all current models as NEW: <model_name>\n\nOtherwise:\nFor each new model in the current list that does NOT appear in the previous list, output:\nNEW: <model_name> \n\nIf there are no new models, output: NO_NEW_MODELS \n\nBe precise — exact match only. Output only the comparison, no summary. Please share it in nice MD format.", "--content", "Previous models:\n{{result}}\n\nCurrent models:\n{{$CURRENT_MODELS}}"],
+      "args": ["functions/ai-task.js", "--instructions-file", "tasks/compare-models-instructions.txt", "--content-file", "output/compare-content.txt"],
       "saveResultToVariable": "COMPARISON"
     },
     {
@@ -59,7 +71,7 @@
       "id": "notify-telegram",
       "type": "shell",
       "command": "node",
-      "args": ["functions/send-telegram.js", "--chat-id", "$TELEGRAM_CHAT_ID", "--file", "output/comparison.txt"]
+      "args": ["functions/send-telegram.js", "--chat-id", "$TELEGRAM_CHAT_ID", "--file", "$OUTPUT_DIR/comparison.txt"]
     }
   ]
 }

@@ -1,0 +1,1 @@
+Extract full list of the maker-model(format: <maker>/<modelName>) from the given content. Start your response with Model List:.
