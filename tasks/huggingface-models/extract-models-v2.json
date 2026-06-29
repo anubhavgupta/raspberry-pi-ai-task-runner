@@ -1,7 +1,7 @@
 {
   "name": "extract-models-v2",
   "description": "Fetch Hugging Face models, compare with stored list, send new models to Telegram",
-  "cron": "38 22 * * *",
+  "cron": "0 8,17 * * *",
   "env": {
     "MODEL_URL": "https://huggingface.co/models",
     "LLM_API_URL": "http://192.168.1.33:7838/v1/chat/completions",
@@ -27,7 +27,7 @@
       "id": "ai-extract",
       "type": "shell",
       "command": "node",
-      "args": ["functions/ai-task.js", "--instructions-file", "tasks/extract-models-instructions.txt", "--content-file", "output/models-raw-content.txt"],
+      "args": ["functions/ai-task.js", "--instructions-file", "tasks/huggingface-models/extract-models-instructions.txt", "--content-file", "output/models-raw-content.txt"],
       "saveResultToVariable": "CURRENT_MODELS"
     },
     {
@@ -52,7 +52,7 @@
       "id": "compare",
       "type": "shell",
       "command": "node",
-      "args": ["functions/ai-task.js", "--instructions-file", "tasks/compare-models-instructions.txt", "--content-file", "output/compare-content.txt"],
+      "args": ["functions/ai-task.js", "--instructions-file", "tasks/huggingface-models/compare-models-instructions.txt", "--content-file", "output/compare-content.txt"],
       "saveResultToVariable": "COMPARISON"
     },
     {

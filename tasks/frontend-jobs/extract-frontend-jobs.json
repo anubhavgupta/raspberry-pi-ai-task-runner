@@ -1,7 +1,7 @@
 {
   "name": "extract-frontend-jobs",
   "description": "Fetch Hacker News jobs page, extract frontend-related jobs, send to Telegram",
-  "cron": "0 * * * *",
+  "cron": "30 8,14,20,2 * * *",
   "env": {
     "JOBS_URL": "https://news.ycombinator.com/jobs",
     "TELEGRAM_CHAT_ID": "6383504811",
@@ -26,7 +26,7 @@
       "id": "ai-extract",
       "type": "shell",
       "command": "node",
-      "args": ["functions/ai-task.js", "--instructions-file", "tasks/extract-frontend-jobs-instructions.txt", "--content-file", "output/jobs-raw-content.txt"],
+      "args": ["functions/ai-task.js", "--instructions-file", "tasks/frontend-jobs/extract-frontend-jobs-instructions.txt", "--content-file", "output/jobs-raw-content.txt"],
       "saveResultToVariable": "FRONTEND_JOBS"
     },
     {

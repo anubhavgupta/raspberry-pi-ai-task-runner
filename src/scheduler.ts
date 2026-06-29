@@ -18,27 +18,32 @@ try {
 }
 
 /**
- * Scan a directory for .json task config files.
+ * Recursively scan a directory for .json task config files.
  */
-function scanTaskDirectory(tasksDir: string): ScheduledTask[] {
+function scanTaskDirectory(dir: string): ScheduledTask[] {
   const tasks: ScheduledTask[] = [];
 
-  if (!statSync(tasksDir)?.isDirectory()) {
-    logger.warn(`Tasks directory not found: ${tasksDir}`);
+  if (!statSync(dir)?.isDirectory()) {
+    logger.warn(`Tasks directory not found: ${dir}`);
     return tasks;
   }
 
-  const entries = readdirSync(tasksDir);
+  const entries = readdirSync(dir);
 
   for (const entry of entries) {
+    const fullPath = join(dir, entry);
+    const stats = statSync(fullPath);
+
+    if (stats.isDirectory()) {
+      const subtasks = scanTaskDirectory(fullPath);
+      tasks.push(...subtasks);
+      continue;
+    }
+
     if (!entry.endsWith('.json')) continue;
 
-    const filePath = join(tasksDir, entry);
-    const stats = statSync(filePath);
-    if (!stats.isFile()) continue;
-
     try {
-      const config = JSON.parse(require('fs').readFileSync(filePath, 'utf-8')) as TaskConfig;
+      const config = JSON.parse(require('fs').readFileSync(fullPath, 'utf-8')) as TaskConfig;
 
       // Validate cron expression
       if (!cron.validate(config.cron)) {
@@ -54,7 +59,7 @@ function scanTaskDirectory(tasksDir: string): ScheduledTask[] {
 
       logger.info(`Loaded task: ${config.name} [${config.cron}]`);
     } catch (err) {
-      logger.error(`Failed to load task config: ${filePath}`, { error: String(err) });
+      logger.error(`Failed to load task config: ${fullPath}`, { error: String(err) });
     }
   }
 

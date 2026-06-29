@@ -7,6 +7,27 @@ import { logger } from './logger';
 
 const DEFAULT_TASKS_DIR = resolve(process.cwd(), 'tasks');
 
+/**
+ * Recursively find all .json task config paths in a directory.
+ */
+function findTaskFiles(dir: string): string[] {
+  const results: string[] = [];
+  const entries = readdirSync(dir);
+
+  for (const entry of entries) {
+    const fullPath = join(dir, entry);
+    const stats = statSync(fullPath);
+
+    if (stats.isDirectory()) {
+      results.push(...findTaskFiles(fullPath));
+    } else if (entry.endsWith('.json')) {
+      results.push(fullPath);
+    }
+  }
+
+  return results;
+}
+
 function listTasks(tasksDir: string): void {
   const dirStat = statSync(tasksDir);
   if (!dirStat.isDirectory()) {
@@ -14,9 +35,9 @@ function listTasks(tasksDir: string): void {
     process.exit(1);
   }
 
-  const entries = readdirSync(tasksDir).filter(f => f.endsWith('.json'));
+  const files = findTaskFiles(tasksDir);
 
-  if (!entries.length) {
+  if (!files.length) {
     logger.info('No task configs found. Add .json files to the tasks/ directory.');
     return;
   }
@@ -24,9 +45,9 @@ function listTasks(tasksDir: string): void {
   console.log('\nConfigured tasks:');
   console.log('─'.repeat(60));
 
-  for (const entry of entries) {
+  for (const filePath of files) {
     try {
-      const config = JSON.parse(require('fs').readFileSync(join(tasksDir, entry), 'utf-8')) as TaskConfig;
+      const config = JSON.parse(require('fs').readFileSync(filePath, 'utf-8')) as TaskConfig;
       const funcCount = config.functions?.length ?? 0;
       const lastFn = config.functions?.[config.functions.length - 1]?.id ?? 'N/A';
 
@@ -38,7 +59,8 @@ function listTasks(tasksDir: string): void {
       }
       console.log();
     } catch {
-      console.log(`  ${entry} (parse error)`);
+      const basename = filePath.split(/[/\\]/).pop();
+      console.log(`  ${basename} (parse error)`);
     }
   }
 
@@ -46,16 +68,23 @@ function listTasks(tasksDir: string): void {
 }
 
 async function runTaskByName(taskName: string, tasksDir: string): Promise<void> {
-  const filePath = join(tasksDir, `${taskName}.json`);
+  const files = findTaskFiles(tasksDir);
+
+  const match = files.find(f => f.replace(/\.json$/, '').split(/[/\\]/).pop() === taskName);
+
+  if (!match) {
+    logger.error(`Task "${taskName}" not found`, { taskName, filePath: `${tasksDir}/${taskName}.json` });
+    process.exit(1);
+  }
 
   try {
-    const config = JSON.parse(require('fs').readFileSync(filePath, 'utf-8')) as TaskConfig;
+    const config = JSON.parse(require('fs').readFileSync(match, 'utf-8')) as TaskConfig;
     await runTask(config, { ...process.env, ...config.env });
   } catch (err) {
     logger.error(`Failed to run task "${taskName}"`, {
       taskName,
       error: String(err),
-      filePath,
+      filePath: match,
     });
     process.exit(1);
   }
