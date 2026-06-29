@@ -1,0 +1,1 @@
+Extract all news items that start with "Show HN:" from the given HTML content. Output one item per line, with only the item title (the full text of the "Show HN:" link text). Do not include timestamps, points, or other metadata. Start your response with Show HN Items:

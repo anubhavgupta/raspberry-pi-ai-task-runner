@@ -1,7 +1,7 @@
 {
   "name": "models-to-telegram",
   "description": "Read models.txt from output directory and send contents via Telegram",
-  "cron": "0 */6 * * *",
+  "cron": "* * * * *",
   "env": {
     "OUTPUT_DIR": "C:\\projects\\pi-ai-tools\\output"
   },

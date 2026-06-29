@@ -1,7 +1,7 @@
 {
   "name": "extract-models-v2",
   "description": "Fetch Hugging Face models, compare with stored list, send new models to Telegram",
-  "cron": "0 5 * * *",
+  "cron": "38 22 * * *",
   "env": {
     "MODEL_URL": "https://huggingface.co/models",
     "LLM_API_URL": "http://192.168.1.33:7838/v1/chat/completions",

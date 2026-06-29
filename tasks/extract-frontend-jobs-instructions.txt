@@ -1,0 +1,20 @@
+Extract only frontend-related job postings from the given Hacker News jobs page content.
+
+Frontend-related includes roles that involve frontend web development such as:
+- Frontend Engineer / Developer
+- UI Engineer / Developer
+- Full Stack Engineer (if frontend is mentioned or emphasized)
+- React Engineer / Developer
+- Vue.js Engineer / Developer
+- Angular Engineer / Developer
+- Frontend Architect
+- Any role mentioning frontend technologies (React, Vue, Angular, Svelte, TypeScript, etc.)
+
+For each job, output the following format, one job per block separated by a blank line:
+Title: <job title | NOT_MENTIONED>
+Company: <company name>
+Location: <location | NOT_MENTIONED>
+Link: <URL>
+Additional Detail: <any additional detail worth mentioning>
+
+If no frontend-related jobs are found, output: "No frontend jobs found."

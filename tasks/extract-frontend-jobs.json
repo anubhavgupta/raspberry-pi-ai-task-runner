@@ -1,0 +1,45 @@
+{
+  "name": "extract-frontend-jobs",
+  "description": "Fetch Hacker News jobs page, extract frontend-related jobs, send to Telegram",
+  "cron": "0 * * * *",
+  "env": {
+    "JOBS_URL": "https://news.ycombinator.com/jobs",
+    "TELEGRAM_CHAT_ID": "6383504811",
+    "LLM_API_URL": "http://192.168.1.33:7838/v1/chat/completions",
+    "LLM_MODEL": "default"
+  },
+  "functions": [
+    {
+      "id": "fetch-page",
+      "type": "shell",
+      "command": "node",
+      "args": ["functions/fetch-page.js", "--url", "$JOBS_URL"],
+      "saveResultToVariable": "RAW_HTML"
+    },
+    {
+      "id": "save-raw",
+      "type": "shell",
+      "command": "node",
+      "args": ["functions/save-to-disk.js", "--file", "output/jobs-raw-content.txt", "--content", "{{$RAW_HTML}}"]
+    },
+    {
+      "id": "ai-extract",
+      "type": "shell",
+      "command": "node",
+      "args": ["functions/ai-task.js", "--instructions-file", "tasks/extract-frontend-jobs-instructions.txt", "--content-file", "output/jobs-raw-content.txt"],
+      "saveResultToVariable": "FRONTEND_JOBS"
+    },
+    {
+      "id": "save-jobs",
+      "type": "shell",
+      "command": "node",
+      "args": ["functions/save-to-disk.js", "--file", "output/frontend-jobs.txt", "--content", "{{$FRONTEND_JOBS}}"]
+    },
+    {
+      "id": "notify-telegram",
+      "type": "terminal",
+      "command": "node",
+      "args": ["functions/send-telegram.js", "--chat-id", "$TELEGRAM_CHAT_ID", "--file", "output/frontend-jobs.txt"]
+    }
+  ]
+}

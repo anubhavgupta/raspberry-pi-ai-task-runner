@@ -1,0 +1,38 @@
+{
+  "name": "extract-show-hn",
+  "description": "Fetch Hacker News Show HN page, extract Show HN items via AI, append to show.txt",
+  "cron": "0 * * * *",
+  "env": {
+    "SHOW_HN_URL": "https://news.ycombinator.com/show",
+    "LLM_API_URL": "http://192.168.1.33:7838/v1/chat/completions",
+    "LLM_MODEL": "default"
+  },
+  "functions": [
+    {
+      "id": "fetch-page",
+      "type": "shell",
+      "command": "node",
+      "args": ["functions/fetch-page.js", "--url", "$SHOW_HN_URL"],
+      "saveResultToVariable": "RAW_HTML"
+    },
+    {
+      "id": "save-raw",
+      "type": "shell",
+      "command": "node",
+      "args": ["functions/save-to-disk.js", "--file", "output/show-hn-raw-content.txt", "--content", "{{$RAW_HTML}}"]
+    },
+    {
+      "id": "ai-extract",
+      "type": "shell",
+      "command": "node",
+      "args": ["functions/ai-task.js", "--instructions-file", "tasks/extract-show-hn-instructions.txt", "--content-file", "output/show-hn-raw-content.txt"],
+      "saveResultToVariable": "SHOW_ITEMS"
+    },
+    {
+      "id": "save-to-file",
+      "type": "terminal",
+      "command": "node",
+      "args": ["functions/save-to-disk.js", "--file", "output/show-hn.txt", "--content", "{{$SHOW_ITEMS}}", "--append"]
+    }
+  ]
+}

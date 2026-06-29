@@ -18,8 +18,8 @@ pi-ai-tools/
 │   └── example-task.json   # Sample task
 ├── functions/              # Function implementations (Node.js scripts)
 │   ├── fetch-data.js       # Fetch JSON from URL
-│   ├── extract-body.js     # Extract <body> innerText using jsdom
-│   ├── analyze-output.js   # Analyze JSON/string input
+│   ├── fetch-page.js       # Fetch page + extract visible text using jsdom
+│   ├── analyze-output.js   # Analyze JSON/string input (deprecated, use ai-task.js)
 │   ├── health-check.js     # Terminal validator (returns OK/!OK)
 │   └── ai-task.js          # LLM call via OpenAI-compatible API
 ├── package.json
