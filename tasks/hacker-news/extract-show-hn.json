@@ -1,7 +1,7 @@
 {
   "name": "extract-show-hn",
   "description": "Fetch Hacker News Show HN page, extract Show HN items via AI, append to show.txt",
-  "cron": "0,30,0,30,0,0,0 0,3,5,9,11,15,18,21 * * *",
+  "cron": "0 2,5,10,21 * * *",
   "env": {
     "SHOW_HN_URL": "https://news.ycombinator.com/show",
     "LLM_API_URL": "http://192.168.1.33:7838/v1/chat/completions",
