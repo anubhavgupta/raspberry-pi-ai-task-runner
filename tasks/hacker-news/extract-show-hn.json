@@ -3,6 +3,7 @@
   "description": "Fetch Hacker News Show HN page, extract Show HN items via AI, append to show.txt",
   "cron": "0 2,5,10,21 * * *",
   "env": {
+    "TELEGRAM_CHAT_ID": "6383504811",
     "SHOW_HN_URL": "https://news.ycombinator.com/show",
     "LLM_API_URL": "http://192.168.1.33:7838/v1/chat/completions",
     "LLM_MODEL": "default"
@@ -33,6 +34,31 @@
       "type": "terminal",
       "command": "node",
       "args": ["functions/save-to-disk.js", "--file", "output/show-hn.txt", "--content", "{{$SHOW_ITEMS}}", "--append"]
+    },
+ {
+      "id": "ai-summarize",
+      "type": "shell",
+      "command": "node",
+      "args": ["functions/ai-task.js", "--instructions-file", "tasks/hacker-news/summarize-show-hn-instructions.txt", "--content-file", "output/show-hn.txt"],
+      "saveResultToVariable": "SUMMARY"
+    },
+    {
+      "id": "save-summary",
+      "type": "shell",
+      "command": "node",
+      "args": ["functions/save-to-disk.js", "--file", "output/show-hn-summary.txt", "--content", "{{$SUMMARY}}"]
+    },
+    {
+      "id": "notify-telegram",
+      "type": "shell",
+      "command": "node",
+      "args": ["functions/send-telegram.js", "--chat-id", "$TELEGRAM_CHAT_ID", "--file", "output/show-hn-summary.txt"]
+    },
+    {
+      "id": "clear-show-hn",
+      "type": "terminal",
+      "command": "node",
+      "args": ["functions/save-to-disk.js", "--file", "output/show-hn.txt", "--content", ""]
     }
   ]
 }

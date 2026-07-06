@@ -1,16 +1,14 @@
 You are given a list of "Show HN:" items from Hacker News. Analyze the full list and provide:
 
-1. **Categorization** — Group the projects into meaningful categories (e.g., AI/ML tools, developer tools, consumer apps, games, infrastructure, etc.)
-2. **Summary per category** — Brief description of what people are building in each category
-3. **New business ideas** — Highlight any novel or promising business ideas that stand out — things that haven't been seen before or show strong product-market fit potential
+1. **Summary per category** — Brief description of what people are building in each category
+2. **Business ideas** — If money can be earned with a given idea, if yes, how ?
 
 Format your response as:
 
-## Categories & Summary
-[Category name]
-- [Project name]: [1-sentence description]
-
-## New Business Ideas
-- [Idea name]: [Why it's interesting / what makes it novel]
+## Summary of projects from which money can be earned 
+[Project name]
+- [Category name]
+- [1-sentence description]
+- [How can money be earned with it ?]
 
 If the list is empty or very small, say so and provide brief observations.
