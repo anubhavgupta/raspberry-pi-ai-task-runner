@@ -57,7 +57,7 @@ export async function runChildProcess(
   return new Promise((resolve) => {
     execFile(resolvedCommand, resolvedArgs, {
       env: { ...process.env, ...env },
-      timeout: 300_000, // 5 minute timeout per function
+      timeout: 3 * 60 * 60 * 1000, // 3 hour timeout per function
     }, (error, stdout, stderr) => {
       const durationMs = Date.now() - startTime;
 
